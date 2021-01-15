@@ -13,6 +13,8 @@ namespace quizGame
         int percentage;
         int totalQuestions;
 
+        int timeLeft;
+
 
 
         public Form1()
@@ -23,6 +25,33 @@ namespace quizGame
 
             totalQuestions = 8;
 
+        }
+
+        private void endGame()
+        {
+            percentage = (int)Math.Round((Double)(score * 100) / totalQuestions);
+
+            timer1.Stop();
+            MessageBox.Show(
+                "Quiz Ended" + Environment.NewLine +
+                "You have anserwered " + score + " questions correctly." + Environment.NewLine +
+                "Your total percentage is " + percentage + "%" + Environment.NewLine +
+                "Click OK to play again"
+                );
+
+            timeLeft = 30;
+            countDownLabel.Text = "30 sec";
+
+            score = 0;
+            questionNumber = 0;
+            askQuestion(questionNumber);
+
+            startButton.Visible = true;
+            startButton.Enabled = true;
+            button1.Enabled = false;
+            button2.Enabled = false;
+            button3.Enabled = false;
+            button4.Enabled = false;
         }
 
         private void checkAnswerEvent(object sender, EventArgs e)
@@ -42,20 +71,23 @@ namespace quizGame
 
                 percentage = (int)Math.Round((Double)(score * 100)/totalQuestions);
 
-                MessageBox.Show(
-                    "Quiz Ended" + Environment.NewLine + 
-                    "You have anserwered " + score + " questions correctly." + Environment.NewLine +
-                    "Your total percentage is " + percentage + "%" + Environment.NewLine +
-                    "Click OK to play again"
-                    );
-
-                score = 0;
-                questionNumber = 0;
-                askQuestion(questionNumber);
+                endGame();
             }
 
             questionNumber++;
             askQuestion(questionNumber);
+            if (questionNumber != 1)
+            {
+                startTimer();
+            }    
+        }
+
+
+        private void startTimer()
+        {
+            timeLeft = 30;
+            countDownLabel.Text = "30 sec";
+            timer1.Start();
         }
 
 
@@ -149,6 +181,43 @@ namespace quizGame
 
 
 
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (timeLeft > 0)
+            {
+                timeLeft--;
+                countDownLabel.Text = timeLeft + " sec";
+            }
+            else
+            {
+                timer1.Stop();
+                questionNumber++;
+                askQuestion(questionNumber);
+                startTimer();
+            }
+
+            if (questionNumber == totalQuestions &&  timeLeft == 0)
+            {
+                endGame();
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            startButton.Visible = false;
+            startButton.Enabled = false;
+            startTimer();
+            button1.Enabled = true;
+            button2.Enabled = true;
+            button3.Enabled = true;
+            button4.Enabled = true;
         }
     }
 }
